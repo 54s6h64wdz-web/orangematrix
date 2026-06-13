@@ -289,11 +289,253 @@
   .drag-ghost { position: fixed; pointer-events: none; z-index: 9999; background: white; border: 2px solid var(--orange); border-radius: var(--radius-sm); padding: 6px 12px; font-size: 13px; font-weight: 500; color: var(--orange); box-shadow: 0 4px 16px rgba(255,121,0,0.25); white-space: nowrap; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.1s; }
   .drag-ghost.visible { opacity: 1; }
 
-  @media (max-width: 640px) {
-    .config-bar, .phones-grid { grid-template-columns: 1fr; }
-    main { padding: 1rem 1rem 2rem; }
-    .footer-card { flex-direction: column; align-items: flex-start; }
+  /* ── Mobile bottom bar ── */
+  .mobile-bottom-bar {
+    display: none;
   }
+  @media (max-width: 768px) {
+    .mobile-bottom-bar {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 0.5px solid var(--border);
+      padding: 10px 16px env(safe-area-inset-bottom, 10px);
+      gap: 10px;
+      z-index: 80;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+    }
+    .mobile-bottom-bar .print-btn {
+      flex: 1;
+      margin-top: 0;
+      font-size: 14px;
+      padding: 11px;
+    }
+    main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  /* ── Hamburger (mobile only) ── */
+  .hamburger-btn {
+    display: none;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 8px;
+    width: 36px; height: 36px;
+    align-items: center; justify-content: center;
+    cursor: pointer; color: white;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .hamburger-btn:hover { background: rgba(255,255,255,0.28); }
+
+  /* ── Sidebar overlay (mobile) ── */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 90;
+    transition: opacity 0.25s;
+  }
+  .sidebar-overlay.open { display: block; }
+
+  /* ── Touch-add button (palette items on mobile) ── */
+  .touch-add-btn {
+    display: none;
+    background: var(--orange);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 18px;
+    line-height: 1;
+    transition: opacity 0.15s, transform 0.1s;
+    margin-left: auto;
+  }
+  .touch-add-btn:active { transform: scale(0.9); opacity: 0.8; }
+
+  /* ── Touch-add popup (col picker) ── */
+  .touch-col-picker {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.16);
+    z-index: 500;
+    padding: 20px 20px 32px;
+    animation: slideUp 0.25s ease;
+  }
+  .touch-col-picker.open { display: block; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .touch-col-picker-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+  .touch-col-picker-btns { display: flex; flex-direction: column; gap: 10px; }
+  .touch-col-picker-btn {
+    padding: 13px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    font-size: 14px; font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .touch-col-picker-btn:active { background: var(--orange-light); border-color: var(--orange); color: var(--orange); }
+  .touch-col-picker-cancel {
+    margin-top: 8px;
+    padding: 12px;
+    width: 100%;
+    background: none;
+    border: none;
+    font-size: 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+  .touch-col-picker-cancel:active { background: var(--bg); }
+  .touch-picker-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 499;
+  }
+  .touch-picker-overlay.open { display: block; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    /* Hamburger visible, sidebar hidden by default */
+    .hamburger-btn { display: flex; }
+
+    header { padding: 0 1rem; gap: 10px; }
+    .header-title { font-size: 13px; padding-left: 10px; }
+
+    /* Sidebar becomes a fixed drawer */
+    .sidebar {
+      position: fixed;
+      top: 0; bottom: 0; left: 0;
+      width: 280px;
+      z-index: 95;
+      transform: translateX(-100%);
+      transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+      padding-top: 72px;
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    /* Main takes full width */
+    main { margin-left: 0; padding: 1rem 0.875rem 3rem; }
+
+    /* Phones stack vertically */
+    .phones-grid { grid-template-columns: 1fr; gap: 14px; }
+
+    /* Phone columns: compact */
+    .phone-col { padding: 14px; }
+    .phone-visual { height: 110px; margin: 4px 0 6px; }
+    .phone-visual img { max-height: 110px; }
+
+    /* Palette items: show touch-add button, hide drag hint */
+    .palette-item { cursor: default; user-select: auto; }
+    .palette-item:hover { border-color: var(--border-strong); background: var(--bg); }
+    .palette-item:active { opacity: 1; transform: none; }
+    .touch-add-btn { display: flex; }
+    .drag-hint { display: none; }
+    .acc-section-header .drag-hint { display: none; }
+    .drag-hint-overlay { display: none !important; }
+
+    /* Pack tile: tap-friendly */
+    .pack-tile { cursor: pointer; user-select: auto; width: 100%; }
+    .pack-tile:hover { transform: none; }
+    .pack-tile:active { transform: scale(0.98); opacity: 0.85; }
+
+    /* Drop zone: smaller touch hint */
+    .drop-zone { min-height: 44px; }
+    .empty-hint { font-size: 11px; }
+
+    /* Final amount slightly smaller */
+    .final-amount { font-size: 24px; }
+
+    /* Print btn */
+    .print-btn { font-size: 12px; padding: 9px; }
+
+    /* Modal: full screen on mobile */
+    .modal-overlay { padding: 0; align-items: flex-end; justify-content: stretch; }
+    .modal-panel { max-width: 100%; max-height: 90vh; border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-top-left-radius: var(--radius); border-top-right-radius: var(--radius); }
+
+    /* Price table: horizontal scroll */
+    .price-table { display: block; overflow-x: auto; white-space: nowrap; }
+  }
+
+  @media (max-width: 400px) {
+    .header-title { display: none; }
+    .phones-grid { gap: 12px; }
+    .phone-col { padding: 12px; }
+    .final-amount { font-size: 22px; }
+    .toggle-btn { font-size: 12px; padding: 7px 4px; }
+  }
+
+  .add-col-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    min-height: 160px;
+    padding: 20px;
+  }
+  .add-col-btn:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+  .add-col-icon {
+    width: 44px; height: 44px;
+    background: var(--bg);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 300; line-height: 1;
+    border: 1.5px solid var(--border-strong);
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .add-col-btn:hover .add-col-icon { background: var(--orange); border-color: var(--orange); color: white; }
+  .add-col-label { font-size: 12px; font-weight: 500; text-align: center; line-height: 1.4; }
+
+  .phones-grid.single-col { grid-template-columns: 1fr 1fr; }
+  .phones-grid.single-col .add-col-btn { min-height: unset; align-self: stretch; }
+
+  @media (max-width: 768px) {
+    .phones-grid.single-col { grid-template-columns: 1fr; }
+    .phones-grid.single-col .add-col-btn { width: 100%; min-height: 64px; flex-direction: row; gap: 12px; }
+    .phones-grid.single-col .add-col-icon { width: 32px; height: 32px; font-size: 20px; flex-shrink: 0; }
+  }
+  }
+
+  /* ── Forfait cost block ── */
+  .forfait-block { display: flex; flex-direction: column; gap: 8px; }
+  .forfait-checkboxes { display: flex; flex-direction: column; gap: 6px; }
+  .forfait-check-row { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+  .forfait-check-row input[type=checkbox] { accent-color: var(--orange); width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; }
+  .forfait-check-label { font-size: 12px; color: var(--text); line-height: 1.3; }
+  .forfait-check-label .odr-tag { font-size: 10px; font-weight: 600; color: var(--orange); background: var(--orange-light); border-radius: 3px; padding: 1px 4px; margin-left: 4px; }
+  .forfait-check-row.disabled { opacity: 0.38; pointer-events: none; }
+  .forfait-prices { display: flex; flex-direction: column; gap: 4px; margin-top: 2px; }
+  .forfait-price-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .forfait-price-label { font-size: 11px; color: var(--text-muted); }
+  .forfait-price-val { font-size: 15px; font-weight: 700; color: var(--orange); }
+  .forfait-price-val.year2 { font-size: 13px; color: var(--text); font-weight: 600; }
+  .forfait-price-suffix { font-size: 10px; font-weight: 400; color: var(--text-muted); }
+  .forfait-divider { border: none; border-top: 0.5px solid var(--border); margin: 6px 0; }
+  .forfait-relatif { background: var(--orange-light); border-radius: var(--radius-sm); padding: 8px 10px; }
+  .forfait-relatif-text { font-size: 11px; color: var(--text); line-height: 1.5; }
+  .forfait-relatif-text strong { color: var(--orange); font-size: 13px; }
+  .forfait-na { font-size: 11px; color: var(--text-muted); font-style: italic; text-align: center; padding: 6px 0; }
+
   /* AppleCare */
   .applecare-block { margin-top: 10px; border: 0.5px solid #e0d8d8; border-radius: var(--radius-sm); background: #fdf8f8; padding: 9px 11px; font-size: 11px; color: #555; }
   .applecare-name { font-size: 12px; font-weight: 600; color: #333; }
@@ -312,12 +554,28 @@
 <body>
 
 <header>
+  <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu" title="Menu">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
   <span class="logo">orange</span>
   <span class="header-title">Simulateur Apple Champion</span>
   <button class="settings-btn" onclick="toggleEditor()" title="Paramètres prix" aria-label="Paramètres prix">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2"/></svg>
   </button>
 </header>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- Touch column picker (mobile accessory add) -->
+<div class="touch-picker-overlay" id="touch-picker-overlay" onclick="closeTouchPicker()"></div>
+<div class="touch-col-picker" id="touch-col-picker">
+  <div class="touch-col-picker-title" id="touch-picker-label">Ajouter à…</div>
+  <div class="touch-col-picker-btns" id="touch-picker-btns"></div>
+  <button class="touch-col-picker-cancel" onclick="closeTouchPicker()">Annuler</button>
+</div>
 
 <div class="app-layout">
 
@@ -353,10 +611,17 @@
           </label>
         </div>
         <div class="sidebar-reprise-amount" id="reprise-amount-wrap" style="display:none;">
-          <input type="number" id="reprise-input" min="0" step="1" value="0" placeholder="0" oninput="updateReprise()">
+          <input type="number" id="reprise-input" min="0" step="1" value="" placeholder="0" oninput="updateReprise()" onfocus="if(!this.value||this.value==='0')this.value=''" onblur="if(!this.value)this.value=''">
           <span style="font-size:14px;font-weight:600;color:var(--orange);">€</span>
         </div>
         <span class="reprise-active-badge" id="reprise-badge" style="display:none;"></span>
+      </div>
+    </div>
+
+    <div class="sidebar-card" id="forfait-cost-card">
+      <div class="section-label">Coût du forfait</div>
+      <div id="forfait-cost-block">
+        <!-- Rendu dynamiquement par renderForfaitBlock() -->
       </div>
     </div>
 
@@ -369,7 +634,7 @@
 
   <main>
 
-  <div class="phones-grid">
+  <div class="phones-grid" id="phones-grid">
     <div class="phone-col" id="col-0" ondragover="allowDrop(event,0)" ondrop="dropAcc(event,0)" ondragleave="leaveDrop(0)">
       <div class="col-header">
         <div class="section-label">Téléphone 1</div>
@@ -410,11 +675,18 @@
       <div style="min-height:24px;margin-top:4px;" id="diff-0"></div>
       <div id="applecare-0"></div>
     </div>
-    <div class="phone-col" id="col-1" ondragover="allowDrop(event,1)" ondrop="dropAcc(event,1)" ondragleave="leaveDrop(1)">
+
+    <!-- Bouton ajout 2e téléphone -->
+    <button class="add-col-btn" id="add-col-btn" onclick="showCol1()" title="Ajouter un 2e téléphone">
+      <span class="add-col-icon">+</span>
+      <span class="add-col-label">Ajouter un<br>2e téléphone</span>
+    </button>
+
+    <div class="phone-col" id="col-1" style="display:none;" ondragover="allowDrop(event,1)" ondrop="dropAcc(event,1)" ondragleave="leaveDrop(1)">
       <div class="col-header">
         <div class="section-label">Téléphone 2</div>
-        <button class="reset-btn" onclick="resetCol(1)" title="Réinitialiser">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        <button class="reset-btn" onclick="hideCol1()" title="Supprimer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <select id="select-1" onchange="updatePhone(1,this.value)">
@@ -454,12 +726,12 @@
 
   <div class="palette-card">
     <div class="section-label">Accessoires et prestations</div>
-    <div class="palette-intro">
+    <div class="palette-intro" id="palette-intro">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 9l4 4 10-10"/><rect x="2" y="2" width="20" height="20" rx="3"/></svg>
-      Glisser un élément vers un téléphone pour l'ajouter
+      <span id="palette-intro-text">Glisser un élément vers un téléphone pour l'ajouter</span>
     </div>
     <!-- Pack 3+1 Apple -->
-    <div class="pack-tile" draggable="true" id="pack-tile" ondragstart="startPackDrag(event)">
+    <div class="pack-tile" draggable="true" id="pack-tile" ondragstart="startPackDrag(event)" onclick="handlePackClick(event)">
       <div class="pack-tile-icon">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
       </div>
@@ -467,6 +739,7 @@
         <div class="pack-tile-title">Pack 3+1 Apple</div>
         <div class="pack-tile-items">Coque · AirTag (1€) · Chargeur 20W · Zagg</div>
       </div>
+      <button class="touch-add-btn" style="margin-left:auto;background:var(--orange);" onclick="touchAddPack()" title="Ajouter le pack" aria-label="Ajouter le pack">+</button>
     </div>
     <div class="palette-items" id="palette"></div>
     <div style="margin-top:12px;padding:8px 12px;background:var(--amber-bg);border-radius:var(--radius-sm);font-size:12px;color:var(--amber-text);display:flex;align-items:center;gap:8px;">
@@ -584,13 +857,15 @@ let prixDate = '';
 let repriseActive = false;
 let repriseVal = 0;
 
-function resetCol(col) {
-  selectedPhone[col] = null;
-  colAccs[col] = [];
-  const sel = document.getElementById('select-'+col);
-  sel.value = '';
-  renderAll();
-}
+// ── Données forfaits ──
+const FORFAIT_DATA = {
+  ss80: { label: '80 Go', base: 29.99, open: -7,  odrBienvenueAcqi: 0,   odrCross: -2 },
+  '200':  { label: '200 Go', base: 47.99, open: -8,  odrBienvenueAcqi: -10, odrCross: -5 },
+  '300':  { label: '300 Go', base: 67.99, open: -15, odrBienvenueAcqi: 0,   odrCross: -5 },
+};
+let forfaitOpenChecked = true;
+let forfaitOdrBienvenueChecked = false;
+let forfaitOdrCrossChecked = false;
 
 function setReprise(active) {
   repriseActive = active;
@@ -637,6 +912,8 @@ function init() {
       opt.value = i; opt.textContent = p.name; sel.appendChild(opt);
     });
   });
+  // Démarrer avec une seule colonne
+  document.getElementById('phones-grid').classList.add('single-col');
   buildPalette();
   buildPriceTables();
   const today = new Date().toISOString().split('T')[0];
@@ -644,6 +921,12 @@ function init() {
   prixDate = today;
   updateDateDisplay();
   renderAll();
+
+  // Adapter le texte d'intro de la palette selon l'appareil
+  const introText = document.getElementById('palette-intro-text');
+  if(introText && window.innerWidth <= 768) {
+    introText.textContent = 'Appuyer sur + pour ajouter à un téléphone';
+  }
 
   // Vague "holla" en boucle sur les items de la palette + la tuile pack
   window.hollaActive = true;
@@ -691,6 +974,7 @@ function buildPalette() {
     }
     return `<div class="palette-item" draggable="true" data-id="${a.id}" ondragstart="startDrag(event,'${a.id}',null)">
       ${getIcon(a.icon)}<span class="item-name">${a.name}</span>${priceInfo}
+      <button class="touch-add-btn" onclick="touchAddAcc('${a.id}')" title="Ajouter" aria-label="Ajouter ${a.name}">+</button>
     </div>`;
   }).join('');
 }
@@ -1020,6 +1304,7 @@ function toggleAppleCare(uid) {
 function renderAll() {
   [0,1].forEach(col => { renderVisual(col); renderPrice(col); renderDropZone(col); renderTotal(col); renderAppleCare(col); });
   renderDiff();
+  renderForfaitBlock();
 }
 
 function renderPrice(col) {
@@ -1033,7 +1318,8 @@ function renderPrice(col) {
 
 function renderDropZone(col) {
   const zone = document.getElementById('drop-'+col);
-  if(colAccs[col].length === 0) { zone.innerHTML = '<span class="empty-hint">Glissez des accessoires ici</span>'; return; }
+  const isMobile = window.innerWidth <= 768;
+  if(colAccs[col].length === 0) { zone.innerHTML = `<span class="empty-hint">${isMobile ? 'Appuyez sur + pour ajouter' : 'Glissez des accessoires ici'}</span>`; return; }
   const pack = isPackActive(col);
   let appleIdx = 0;
   let html = colAccs[col].map(entry => {
@@ -1224,6 +1510,251 @@ function closeEditorOnOverlay(e) {
 
 init();
 
+function handlePackClick(e) {
+  // Only trigger tap-add on mobile (touch devices), and not if it was a drag click
+  if(e.target.closest('.touch-add-btn')) return; // handled by button's own onclick
+  if(window.innerWidth <= 768) {
+    touchAddPack();
+  }
+}
+
+// ── Gestion 2e téléphone ──
+function showCol1() {
+  document.getElementById('col-1').style.display = '';
+  document.getElementById('add-col-btn').style.display = 'none';
+  document.getElementById('phones-grid').classList.remove('single-col');
+  renderAll();
+}
+
+function hideCol1() {
+  resetCol(1);
+  document.getElementById('col-1').style.display = 'none';
+  document.getElementById('add-col-btn').style.display = '';
+  document.getElementById('phones-grid').classList.add('single-col');
+  renderAll();
+}
+
+// ── Mobile sidebar ──
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  const isOpen = sidebar.classList.toggle('open');
+  overlay.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+function closeSidebar() {
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── Mobile touch-add accessory ──
+let touchPendingId = null;
+let touchPendingPack = false;
+
+function touchAddAcc(accId) {
+  touchPendingId = accId;
+  touchPendingPack = false;
+  openTouchPicker(accId === '__pack__' ? 'Pack 3+1 Apple' : (accessories.find(a => a.id === accId)||{name:''}).name);
+}
+
+function touchAddPack() {
+  touchPendingPack = true;
+  touchPendingId = '__pack__';
+  openTouchPicker('Pack 3+1 Apple');
+}
+
+function openTouchPicker(label) {
+  const btns = document.getElementById('touch-picker-btns');
+  const col1Visible = document.getElementById('col-1').style.display !== 'none';
+  const name0 = selectedPhone[0] !== null ? phones[selectedPhone[0]].name : 'Téléphone 1';
+  const name1 = selectedPhone[1] !== null ? phones[selectedPhone[1]].name : 'Téléphone 2';
+  btns.innerHTML = `
+    <button class="touch-col-picker-btn" onclick="confirmTouchAdd(0)"><strong>${name0}</strong></button>
+    ${col1Visible ? `<button class="touch-col-picker-btn" onclick="confirmTouchAdd(1)"><strong>${name1}</strong></button>` : ''}
+  `;
+  document.getElementById('touch-picker-label').textContent = 'Ajouter « ' + label + ' » à…';
+  document.getElementById('touch-col-picker').classList.add('open');
+  document.getElementById('touch-picker-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeTouchPicker() {
+  document.getElementById('touch-col-picker').classList.remove('open');
+  document.getElementById('touch-picker-overlay').classList.remove('open');
+  touchPendingId = null;
+  touchPendingPack = false;
+  document.body.style.overflow = '';
+}
+
+function confirmTouchAdd(col) {
+  // Sauvegarder avant closeTouchPicker() qui remet tout à null
+  const pendingId   = touchPendingId;
+  const pendingPack = touchPendingPack;
+  closeTouchPicker();
+  if(pendingPack || pendingId === '__pack__') {
+    // Drop du pack complet
+    const dropEl = document.getElementById('drop-'+col);
+    burstParticles(dropEl);
+    const toAdd = PACK_IDS.filter(id => !colAccs[col].find(x => x.id === id));
+    toAdd.forEach((id, i) => {
+      setTimeout(() => {
+        const a = accessories.find(x => x.id === id);
+        const entry = {id, uid: id + '_' + Date.now() + '_' + Math.random().toString(36).slice(2)};
+        colAccs[col].push(entry);
+        renderDropZone(col);
+        renderTotal(col);
+        renderDiff();
+        setTimeout(() => {
+          const tags = document.querySelectorAll('#drop-'+col+' .acc-tag, #drop-'+col+' .model-tag');
+          const last = tags[tags.length - 1];
+          if(last) { last.classList.add('exploding'); last.addEventListener('animationend', () => last.classList.remove('exploding'), {once:true}); }
+        }, 30);
+      }, i * 220);
+    });
+    if(window.hollaActive) { window.hollaActive = false; document.querySelectorAll('.palette-item').forEach(el => el.classList.remove('holla')); }
+  } else if(pendingId) {
+    const id = pendingId;
+    const a = accessories.find(x => x.id === id);
+    const entry = {id, uid: id + '_' + Date.now() + '_' + Math.random().toString(36).slice(2)};
+    if(a.type === 'model') entry.modelKey = a.models[0].key;
+    if(a.type === 'custom') { entry.customPrice = 0; entry.customLabel = 'Autre'; }
+    colAccs[col].push(entry);
+    if(window.hollaActive) { window.hollaActive = false; document.querySelectorAll('.palette-item').forEach(el => el.classList.remove('holla')); }
+    renderAll();
+    // Animate the new tag
+    setTimeout(() => {
+      const tags = document.querySelectorAll('#drop-'+col+' .acc-tag, #drop-'+col+' .model-tag');
+      const last = tags[tags.length - 1];
+      if(last) { last.classList.add('exploding'); last.addEventListener('animationend', () => last.classList.remove('exploding'), {once:true}); }
+    }, 30);
+  }
+}
+
+// Close sidebar when a contrat/forfait button is tapped on mobile
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.sidebar .toggle-btn');
+  if(btn && window.innerWidth <= 768) {
+    // Small delay so state updates first, then close
+    setTimeout(closeSidebar, 120);
+  }
+});
+
+function renderForfaitBlock() {
+  const el = document.getElementById('forfait-cost-block');
+  if(!el) return;
+
+  // Nu/vSIM → pas de forfait Orange
+  if(contrat === 'nu') {
+    el.innerHTML = '<div class="forfait-na">Non applicable en Nu / vSIM</div>';
+    return;
+  }
+
+  const fd = FORFAIT_DATA[forfait];
+  if(!fd) { el.innerHTML = ''; return; }
+
+  const isAcqi = (contrat === 'acq');
+
+  // Remise open : toujours dispo (PCM + Acqui)
+  const canOpen = true;
+  // ODR bienvenue : acqui seulement, et seulement si le forfait a un tarif
+  const canOdrBienvenue = isAcqi && fd.odrBienvenueAcqi < 0;
+  // ODR cross sell : acqui seulement
+  const canOdrCross = isAcqi && fd.odrCross < 0;
+
+  // Prix an 1 = base + open (si coché, permanent) + ODRs (si cochés, 12 mois)
+  const remiseOpen        = (forfaitOpenChecked && canOpen)           ? fd.open              : 0;
+  const remiseOdrBienvenu = (forfaitOdrBienvenueChecked && canOdrBienvenue) ? fd.odrBienvenueAcqi : 0;
+  const remiseOdrCross    = (forfaitOdrCrossChecked && canOdrCross)   ? fd.odrCross          : 0;
+
+  const prix1 = fd.base + remiseOpen + remiseOdrBienvenu + remiseOdrCross;
+  const prix2 = fd.base + remiseOpen; // ODRs expirent, open reste
+
+  // Calcul du coût relatif sur 2 ans
+  // On cherche le prix nu du téléphone sélectionné (col 0 en priorité, sinon col 1)
+  let prixNu = null;
+  for(let c = 0; c < 2; c++) {
+    if(selectedPhone[c] !== null) {
+      prixNu = phones[selectedPhone[c]].nu;
+      break;
+    }
+  }
+
+  // Prix acqui du téléphone (pour le calcul) = ce que le client paie en caisse col 0/1
+  let prixAcqi = null;
+  for(let c = 0; c < 2; c++) {
+    if(selectedPhone[c] !== null) {
+      const bp = getPhonePrice(selectedPhone[c]);
+      if(bp !== null) {
+        prixAcqi = bp - (repriseActive && repriseVal > 0 ? repriseVal : 0);
+        break;
+      }
+    }
+  }
+
+  // Nom du téléphone utilisé dans le calcul
+  let nomTel = null;
+  for(let c = 0; c < 2; c++) {
+    if(selectedPhone[c] !== null) {
+      nomTel = phones[selectedPhone[c]].name;
+      break;
+    }
+  }
+
+  const cout2ans = prix1 * 12 + prix2 * 12 + (prixAcqi !== null ? prixAcqi : 0);
+  const coutForfaitPur = prixNu !== null ? cout2ans - prixNu : null;
+  const coutMensuel = coutForfaitPur !== null ? coutForfaitPur / 24 : null;
+
+  el.innerHTML = `
+    <div class="forfait-block">
+      <div class="forfait-checkboxes">
+        <label class="forfait-check-row${canOpen ? '' : ' disabled'}">
+          <input type="checkbox" id="chk-open" onchange="onForfaitCheck()" ${forfaitOpenChecked && canOpen ? 'checked' : ''} ${canOpen ? '' : 'disabled'}>
+          <span class="forfait-check-label">Remise Open <span class="odr-tag">Permanente</span></span>
+        </label>
+        <label class="forfait-check-row${canOdrBienvenue ? '' : ' disabled'}">
+          <input type="checkbox" id="chk-odr-bienvenue" onchange="onForfaitCheck()" ${forfaitOdrBienvenueChecked && canOdrBienvenue ? 'checked' : ''} ${canOdrBienvenue ? '' : 'disabled'}>
+          <span class="forfait-check-label">ODR Bienvenue <span class="odr-tag">12 mois</span></span>
+        </label>
+        <label class="forfait-check-row${canOdrCross ? '' : ' disabled'}">
+          <input type="checkbox" id="chk-odr-cross" onchange="onForfaitCheck()" ${forfaitOdrCrossChecked && canOdrCross ? 'checked' : ''} ${canOdrCross ? '' : 'disabled'}>
+          <span class="forfait-check-label">ODR Cross Sell <span class="odr-tag">12 mois</span></span>
+        </label>
+      </div>
+      <hr class="forfait-divider">
+      <div class="forfait-prices">
+        <div class="forfait-price-row">
+          <span class="forfait-price-label">${prix1 === prix2 ? 'Mensualité' : '1ère année'}</span>
+          <span class="forfait-price-val">${prix1.toFixed(2).replace('.',',')} €<span class="forfait-price-suffix">/mois</span></span>
+        </div>
+        ${prix1 !== prix2 ? `<div class="forfait-price-row">
+          <span class="forfait-price-label">2ème année</span>
+          <span class="forfait-price-val year2">${prix2.toFixed(2).replace('.',',')} €<span class="forfait-price-suffix">/mois</span></span>
+        </div>` : ''}
+      </div>
+      ${coutMensuel !== null ? `
+      <hr class="forfait-divider">
+      <div class="forfait-relatif">
+        <div class="forfait-relatif-text">
+          Revient au même qu'un <strong>${nomTel}</strong> nu + forfait à
+          <strong>${coutMensuel.toFixed(2).replace('.',',')} €/mois</strong>
+          sur 2 ans
+        </div>
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function onForfaitCheck() {
+  const chkOpen = document.getElementById('chk-open');
+  const chkBienvenue = document.getElementById('chk-odr-bienvenue');
+  const chkCross = document.getElementById('chk-odr-cross');
+  if(chkOpen) forfaitOpenChecked = chkOpen.checked;
+  if(chkBienvenue) forfaitOdrBienvenueChecked = chkBienvenue.checked;
+  if(chkCross) forfaitOdrCrossChecked = chkCross.checked;
+  renderForfaitBlock();
+}
+
 // ── Impression ──
 function genererPDF() {
   const btn = document.getElementById('pdf-btn');
@@ -1256,10 +1787,36 @@ function genererPDF() {
   doc.setFontSize(8);
   doc.text('Valable le ' + dateStr, W - 10, 9.5, {align:'right'});
 
+  // ── Bloc forfait : label discret sous le header ──
+  let START_Y = 18;
+  if(contrat !== 'nu') {
+    const fd = FORFAIT_DATA[forfait];
+    const remiseOpen        = forfaitOpenChecked && fd ? fd.open : 0;
+    const remiseOdrBienvenu = forfaitOdrBienvenueChecked && fd && contrat==='acq' && fd.odrBienvenueAcqi<0 ? fd.odrBienvenueAcqi : 0;
+    const remiseOdrCross    = forfaitOdrCrossChecked    && fd && contrat==='acq' && fd.odrCross<0          ? fd.odrCross          : 0;
+    const p1 = fd ? fd.base + remiseOpen + remiseOdrBienvenu + remiseOdrCross : 0;
+    const p2 = fd ? fd.base + remiseOpen : 0;
+    const samePrice = Math.abs(p1 - p2) < 0.01;
+
+    // Stocker pour usage en bas de page
+    doc._forfaitP1 = p1; doc._forfaitP2 = p2; doc._forfaitSame = samePrice;
+    doc._forfaitLabel = forfaitLabel; doc._contratLabel = contratLabel;
+
+    // Label simple sous le header orange
+    doc.setFillColor(255, 245, 235);
+    doc.rect(0, 14, W, 7, 'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+    doc.setTextColor(...MUTED);
+    doc.text(contratLabel + '  ·  Forfait ' + forfaitLabel + '  ·  Engagement 24 mois', W/2, 19, {align:'center'});
+    START_Y = 23;
+  }
+
   // ── Colonnes ──
-  const colW = 88;
-  const colX = [10, 112];
-  const START_Y = 18;
+  // Si col 1 masquée (pas de 2e téléphone), PDF centré sur une seule colonne
+  const col1Hidden = document.getElementById('col-1').style.display === 'none';
+  const colW = col1Hidden ? 130 : 88;
+  const colX = col1Hidden ? [(W - colW) / 2] : [10, 112];
+  const activeCols = col1Hidden ? [0] : [0, 1];
 
   // Passe 1 : calculer la hauteur des accessoires de chaque colonne
   function calcAccHeight(col) {
@@ -1275,7 +1832,7 @@ function genererPDF() {
   }
 
   const accH0 = calcAccHeight(0);
-  const accH1 = calcAccHeight(1);
+  const accH1 = col1Hidden ? 0 : calcAccHeight(1);
   const maxAccH = Math.max(accH0, accH1);
 
   // Y fixe où commencent les totaux (même pour les deux colonnes)
@@ -1284,9 +1841,9 @@ function genererPDF() {
 
   let maxY = START_Y;
 
-  [0,1].forEach(col => {
+  activeCols.forEach(col => {
     const idx = selectedPhone[col];
-    const x = colX[col];
+    const x = colX[col1Hidden ? 0 : col];
     let y = START_Y;
     const startY = y;
 
@@ -1309,7 +1866,7 @@ function genererPDF() {
     if(p.img) {
       try { doc.addImage(p.img, 'JPEG', x + colW/2 - 18, y, 36, 44, '', 'FAST'); } catch(e) {}
     }
-    y += 47;
+    y += 50;
 
     // Nom téléphone
     doc.setFontSize(11); doc.setFont('helvetica','bold');
@@ -1410,14 +1967,153 @@ function genererPDF() {
     maxY = Math.max(maxY, y + 5);
   });
 
-  // ── Footer ──
-  const footerY = Math.max(maxY + 4, 272);
-  doc.setDrawColor(220,220,220);
-  doc.line(10, footerY, W-10, footerY);
-  doc.setFontSize(7); doc.setFont('helvetica','normal');
-  doc.setTextColor(...MUTED);
-  doc.text('Simulateur Apple Champion — Orange', 10, footerY+4);
-  doc.text('Données à titre indicatif', W-10, footerY+4, {align:'right'});
+  // ── Carte forfait ──
+  // Variables partagées avec la note de bas de page
+  let hasRelatif = false, nomTelPdf = null, coutMensuelPdf = null, prixAcqiPdf = null, prixNuPdf = null;
+
+  if(contrat !== 'nu' && doc._forfaitP1 !== undefined) {
+    const p1 = doc._forfaitP1, p2 = doc._forfaitP2, samePrice = doc._forfaitSame;
+
+    // Calcul coût relatif sur 2 ans
+    for(let c = 0; c < 2; c++) {
+      if(selectedPhone[c] !== null) {
+        if(prixNuPdf === null) { prixNuPdf = phones[selectedPhone[c]].nu; nomTelPdf = phones[selectedPhone[c]].name; }
+        if(prixAcqiPdf === null) {
+          const bp = getPhonePrice(selectedPhone[c]);
+          if(bp !== null) prixAcqiPdf = bp - (repriseActive && repriseVal > 0 ? repriseVal : 0);
+        }
+      }
+    }
+    const cout2ansPdf = p1 * 12 + p2 * 12 + (prixAcqiPdf !== null ? prixAcqiPdf : 0);
+    const coutForfaitPurPdf = prixNuPdf !== null ? cout2ansPdf - prixNuPdf : null;
+    coutMensuelPdf = coutForfaitPurPdf !== null ? coutForfaitPurPdf / 24 : null;
+    hasRelatif = coutMensuelPdf !== null && nomTelPdf !== null;
+
+    const cardW = 100;
+    const cardX = (W - cardW) / 2;
+    const cardY = maxY + 8;
+    // Hauteur dynamique selon le contenu
+    // Forfait label(7) + nom(6) + sep(6) + prix(7) + [2e année(4.5)] + engagement(4.5) + marge bas(6)
+    const cardH = 7 + 6 + 6 + 7 + (samePrice ? 0 : 4.5) + 4.5 + 10;
+
+    // Fond noir profond
+    doc.setFillColor(13, 13, 26);
+    doc.roundedRect(cardX, cardY, cardW, cardH, 4, 4, 'F');
+
+    // Badge 5G en haut à droite
+    const bx = cardX + cardW - 16, by = cardY + 4, bw = 12, bh = 7;
+    doc.setFillColor(...ORANGE);
+    doc.roundedRect(bx, by, bw, bh, 1.5, 1.5, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(6);
+    doc.setTextColor(255, 255, 255);
+    doc.text('5G', bx + bw / 2, by + 4.8, {align:'center'});
+
+    const tx = cardX + 8;
+    let cy = cardY + 9;
+
+    // "Forfait" label
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+    doc.setTextColor(160, 160, 185);
+    doc.text('Forfait', tx, cy);
+    cy += 7;
+
+    // Nom du forfait en grand blanc
+    doc.setFont('helvetica','bold'); doc.setFontSize(16);
+    doc.setTextColor(255, 255, 255);
+    doc.text(doc._forfaitLabel, tx, cy);
+    cy += 6;
+
+    // Séparateur
+    doc.setDrawColor(50, 50, 70);
+    doc.line(tx, cy, cardX + cardW - 8, cy);
+    cy += 6;
+
+    // Prix 1ère année
+    const prixStr = p1.toFixed(2).replace('.',',') + ' \u20AC';
+    doc.setFont('helvetica','bold'); doc.setFontSize(18);
+    doc.setTextColor(...ORANGE);
+    doc.text(prixStr, tx, cy);
+    const prixW = prixStr.length * 3.6;
+    doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    doc.setTextColor(...ORANGE);
+    doc.text('/mois', tx + prixW, cy);
+    cy += 7;
+
+    // 2ème année + engagement — avec espace suffisant
+    doc.setFont('helvetica','normal'); doc.setFontSize(7);
+    doc.setTextColor(160, 160, 185);
+    if(!samePrice) {
+      doc.text('Les 12 premiers mois puis ' + p2.toFixed(2).replace('.',',') + ' \u20AC/mois', tx, cy);
+      cy += 4.5;
+    }
+    doc.text('Engagement 24 mois', tx, cy);
+
+    maxY = cardY + cardH;
+
+    // Carte relatif séparée en dessous
+    if(hasRelatif) {
+      const rCardY = maxY + 5;
+      const rCardH = 18;
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(cardX, rCardY, cardW, rCardH, 3, 3, 'FD');
+      doc.setLineWidth(0.2);
+      // Trait orange à gauche
+      doc.setFillColor(...ORANGE);
+      doc.roundedRect(cardX, rCardY, 3, rCardH, 1.5, 1.5, 'F');
+      // Phrase
+      doc.setFont('helvetica','bold'); doc.setFontSize(8);
+      doc.setTextColor(...DARK);
+      doc.text(
+        'Revient au m\u00eame qu\u2019un ' + nomTelPdf + ' nu + forfait \u00e0',
+        tx, rCardY + 7
+      );
+      doc.setFont('helvetica','bold'); doc.setFontSize(9.5);
+      doc.setTextColor(...ORANGE);
+      doc.text(coutMensuelPdf.toFixed(2).replace('.',',') + ' \u20AC/mois*', tx, rCardY + 14);
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+      doc.setTextColor(100, 100, 100);
+      doc.text('sur 24 mois, engagement compris', tx + 38, rCardY + 14);
+      maxY = rCardY + rCardH;
+    }
+
+  } // fin if(contrat !== 'nu' && doc._forfaitP1 !== undefined)
+
+  // ── Note de bas de page (calcul détaillé) ──
+  const footerY = Math.max(maxY + 6, 268);
+  if(hasRelatif && nomTelPdf && coutMensuelPdf !== null) {
+    const fd2 = FORFAIT_DATA[forfait];
+    const remiseOpen2        = forfaitOpenChecked && fd2 ? fd2.open : 0;
+    const remiseOdrBienvenu2 = forfaitOdrBienvenueChecked && fd2 && contrat==='acq' && fd2.odrBienvenueAcqi<0 ? fd2.odrBienvenueAcqi : 0;
+    const remiseOdrCross2    = forfaitOdrCrossChecked    && fd2 && contrat==='acq' && fd2.odrCross<0          ? fd2.odrCross          : 0;
+    const _p1 = fd2 ? fd2.base + remiseOpen2 + remiseOdrBienvenu2 + remiseOdrCross2 : 0;
+    const _p2 = fd2 ? fd2.base + remiseOpen2 : 0;
+    const cout2ansNote = _p1 * 12 + _p2 * 12 + (prixAcqiPdf !== null ? prixAcqiPdf : 0);
+    const apportStr = prixAcqiPdf !== null ? prixAcqiPdf.toFixed(2).replace('.',',') + '\u00a0\u20AC' : '—';
+    const noteText =
+      '* Detail du calcul : prix caisse ' + (repriseActive && repriseVal > 0 ? (prixAcqiPdf + repriseVal).toFixed(2).replace('.',',') : apportStr.replace('\u00a0', ' ')) + ' EUR' +
+      (repriseActive && repriseVal > 0 ? ' - reprise ' + repriseVal.toFixed(2).replace('.',',') + ' EUR = ' + prixAcqiPdf.toFixed(2).replace('.',',') + ' EUR d\'apport reel' : '') +
+      ' + forfait an 1 (' + _p1.toFixed(2).replace('.',',') + ' EUR x 12) + forfait an 2 (' + _p2.toFixed(2).replace('.',',') + ' EUR x 12)' +
+      ' = ' + cout2ansNote.toFixed(2).replace('.',',') + ' EUR sur 2 ans.' +
+      ' Moins prix nu ' + nomTelPdf + ' (' + prixNuPdf.toFixed(2).replace('.',',') + ' EUR)' +
+      ' = ' + (cout2ansNote - prixNuPdf).toFixed(2).replace('.',',') + ' EUR de forfait reel / 24 mois = ' + coutMensuelPdf.toFixed(2).replace('.',',') + ' EUR/mois.';
+
+    doc.setDrawColor(200, 200, 200);
+    doc.line(10, footerY, W - 10, footerY);
+    doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(...MUTED);
+    doc.text('Simulateur Apple Champion — Orange', 10, footerY + 4);
+    doc.text('Donn\u00e9es \u00e0 titre indicatif', W - 10, footerY + 4, {align:'right'});
+    doc.setFontSize(6); doc.setTextColor(140, 140, 140);
+    const noteLines = doc.splitTextToSize(noteText, W - 20);
+    doc.text(noteLines, 10, footerY + 9);
+  } else {
+    doc.setDrawColor(220, 220, 220);
+    doc.line(10, footerY, W - 10, footerY);
+    doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(...MUTED);
+    doc.text('Simulateur Apple Champion — Orange', 10, footerY + 4);
+    doc.text('Donn\u00e9es \u00e0 titre indicatif', W - 10, footerY + 4, {align:'right'});
+  }
 
   // ── Téléchargement ──
   const fileName = 'simulation_' + today.toISOString().slice(0,10) + '.pdf';
@@ -1427,5 +2123,13 @@ function genererPDF() {
   btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg> PDF';
 }
 </script>
+
+<!-- Mobile bottom bar -->
+<div class="mobile-bottom-bar">
+  <button class="print-btn" onclick="genererPDF()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    Générer PDF
+  </button>
+</div>
 </body>
 </html>
